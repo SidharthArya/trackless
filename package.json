@@ -1,0 +1,28 @@
+{
+  "name": "tracking",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@ant-design/charts": "^2.0.3",
+    "@ant-design/icons": "^5.3.5",
+    "@antv/g-svg": "^2.0.2",
+    "@firebase/analytics": "^0.10.2",
+    "@firebase/app": "^0.10.0",
+    "@firebase/auth": "^1.7.0",
+    "@firebase/firestore": "^4.5.1",
+    "antd": "^5.15.4",
+    "preact": "^10.19.6",
+    "preact-router": "^4.1.2"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.8.2",
+    "typescript": "^5.2.2",
+    "vite": "^5.2.0"
+  }
+}

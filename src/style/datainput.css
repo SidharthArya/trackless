@@ -1,0 +1,95 @@
+.ant-card {
+    transition: .2s;
+    backface-visibility: hidden;
+    overflow: hidden;
+    text-align: center;
+    -webkit-font-smoothing: subpixel-antialiased;
+}
+.ant-card:hover {
+    background: #f0f8fd;
+    transform: scale(105%, 105%)
+}
+.ant-card:hover .ant-card-extra{
+    background: #ffffff;
+}
+.ant-card-extra {
+    padding: 10px;
+    background: #eeeeff;
+    border-radius: 10px;
+}
+.ant-card::before {
+    content: '';
+    height: 100%;
+    position:absolute;
+    width: 100%;
+    minWidth: 200px;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(45deg, #16be5c, #1fb6d1);
+    z-index: 1;
+    opacity: 0;
+    display: none;
+    /* width: 20%; */
+    transform: translateX(-4%) scaleX(-10%);
+
+    transition: .5s;
+    box-sizing: border-box;
+    
+}
+.ant-card-shade::before {
+    display: block;
+    opacity: 1;
+    animation: rotate 4s infinite cubic-bezier(.17,.67,.74,.78);
+
+}
+.ant-card::after{
+    content: '';
+    height: 100%;
+    inset: 10px;
+    position:absolute;
+    width: 100%;
+    display:block;
+    background: #eeeeee;
+    z-index: 2;
+    opacity: 0;
+    box-sizing: border-box;
+    display: none;
+    top: 0;
+    transform: translateX(-4%) scaleX(-97%) scaleY(97%);
+    transition: .2s;
+}
+.ant-card-shade::after {
+    display: block;
+
+    opacity: 1;
+}
+.ant-card-done::after{
+    background: #bbffbb;
+    display: block;
+    opacity: 1;
+    transform:  rotate(0deg) translateX() scaleX(100%) scaleY(200%);
+}
+.ant-card-done::before {
+    display: block;
+    opacity: 1;
+    animation: rotate 4s infinite cubic-bezier(.17,.67,.74,.78);
+
+}
+
+.ant-card-error::after{
+    background: #ffbbbb;
+    display: block;
+    opacity: 1;
+
+}
+@keyframes rotate {
+    from{
+    transform: rotate(0deg) translateX(-4%) scaleX(-30%) scaleY(200%);
+
+    }
+    to {
+    transform:  rotate(360deg) translateX(-4%) scaleX(-30%) scaleY(200%);
+
+    }
+}
