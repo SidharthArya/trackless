@@ -39,3 +39,6 @@ stats.html
 src/config.ts
 .firebase/
 .firebaserc
+firebase.json
+firestore.indexes.json
+firestore.rules
