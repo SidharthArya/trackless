@@ -24,3 +24,15 @@
 #content-element::after {
     
 }
+
+
+.sidebar-filters {
+    padding: 16px;
+    height: 100%;
+    overflow-y: scroll;
+    scrollbar-width: none;
+  }
+
+MARK {
+    background: '#ff0'
+}
