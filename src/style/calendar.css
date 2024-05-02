@@ -1,0 +1,40 @@
+
+.toastui-calendar-milestone {
+    scrollbar-width: none;
+}
+.toastui-calendar-task {
+    scrollbar-width: none;
+}
+.toastui-calendar-allday {
+    scrollbar-width: none;
+}
+.toastui-calendar-panel {
+    scrollbar-width: none;
+
+}
+.toastui-calendar-detail-container {
+    max-width: 100vw;
+}
+.toastui-calendar-popup-container{
+    max-width: 80vw;
+}
+.toastui-calendar-popup-overlay{
+    max-width: 100vw;
+
+}
+.toastui-calendar-form-container{
+    max-width: 100vw;
+}
+
+.toastui-calendar-popup-container{
+
+    max-width: 100vw;
+}
+.toastui-calendar-event-form-popup-slot{
+
+    max-width: 100vw;
+}
+.toastui-calendar-floating-layer{
+
+    max-width: 100vw;
+}
