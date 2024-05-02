@@ -23,8 +23,10 @@ const Login = (props: any) => {
     const handleLogin = (event) => {
         // const email = emailRef.current.value;
         // const password =  passwordRef.current.value;
-        setUser(login(email.value, password.value));
-        console.log(user)
+        let u = login(email.value, password.value, setUser);
+        console.log('User', user, u, !u.error)
+        // if (!u.error) setUser(u)
+        // console.log(user, u)
       };
 
     
