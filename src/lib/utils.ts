@@ -37,40 +37,18 @@ export const sortEKeys = (a, b) => {
     if(refa < refb) return -1; else if (refa > refb) return 1; else return 0
   }
 
+const progressingHandlers = {
+  'Weights': {deps: ['Reps'], fn: (x,y) => y > 12 ? x * 1.1 : x},
+  'Reps': {deps: ['Weights'], fn: (x) => x > 12 ? x*10 : x*1.1 },
+}
 export const progressiveOverload = (d) => {
-    if(d.Weights && d.Reps) {
-      let w = 0;
-      let r = 0;
-      if(d.Reps > 12) {
-        w = 0.12
-        r = -0.12
-      }
-      else {
-        w = 0
-        r = 0.12
-      }
-      d.Weights = d.Weights + w*d.Weights;
-      d.Reps = d.Reps + r*d.Reps;
-    }
-    else if(d.Weights && d.Time) {
-      let w = 0;
-      let t = 0;
-      if(d.Reps > 12) {
-        w = 0.12
-        t = -0.12
-      }
-      else {
-        w = 0
-        t = 0.12
-      }
-      d.Weights = d.Weights + w*d.Weights;
-      d.Time = d.Time + t*d.Time;
-    }
-    else if (d.Time) {
-      let t = 0.12;
-      d.Time = d.Time + t*d.Time;
-
-    }
+  Object.keys(d).map((k)=>{
+    if(!progressingHandlers[d]) return;
+    let args = [parseFloat(row[k])];
+    progressingHandlers[k].deps.map((k1)=> {args.push(parseFloat(row[k1]))});
+    d[k] = progressingHandlers[k].fn.apply(null,args);
+  })
+    if (d.exercise == 'dumbell_shrug') console.log('ds', d)
     return d;
   };
 

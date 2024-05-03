@@ -11,7 +11,10 @@ import { getFirestore,
       doc, 
       getDoc, 
       getDocs,
+      where,
       setDoc,
+      updateDoc,
+      deleteDoc,
       query, 
       collection } from "@firebase/firestore";
 import { log } from './logging.mts';
@@ -28,13 +31,15 @@ const SERVICE = "Database"
 
 
 
-export const login = (email: string, password: string) => {
+export const login = (email: string, password: string, fn: any) => {
     let user = {};
     signInWithEmailAndPassword(auth, email, password).then((u: any)=> {
     localStorage.setItem('user', JSON.stringify(u));
     user = u.user;
+    fn(user)
     }).catch((error: Error)=>{
         log(SERVICE, 'Error Logging In');
+        alert('Error Logging In')
     })
     return user;
 };
@@ -58,7 +63,9 @@ export const getCollectionsAsync = (user: any, path: string, fn: any, nodata: bo
 
 
 // Documents
-export const getDocumentsAsync = (user: any, type: string, path: string, fns: any, docids: boolean = true, lim: number = -1, order: string[] = [], nosnapfn: any=null) => {
+export const getDocumentsAsync = async (user: any, type: string, path: string, fns: any, docids: boolean = true, lim: number = -1, order: string[] = [], nosnapfn: any=null, wheres: any[] = [],) => {
+    let awaitables = [];
+    let len = 0;
     let args: any[] = [db, type, user.uid, ...path.split('/')]
     const colRef = collection.apply(null, args);
     let args2: any[] = [colRef]
@@ -66,6 +73,11 @@ export const getDocumentsAsync = (user: any, type: string, path: string, fns: an
         args2.push(limit(lim))
     if (order.length > 0)
         args2.push(orderBy.apply(null, order))
+
+    if (wheres.length > 0)
+        wheres.map((w)=>{
+            args2.push(where.apply(null, w))
+        })
 
     function callback(snapshot){
         let docs = [];
@@ -80,12 +92,12 @@ export const getDocumentsAsync = (user: any, type: string, path: string, fns: an
             } 
         })
         else if (nosnapfn) nosnapfn();
+
         fns.forEach((fn)=> {docs = fn(docs)});
     }
 
 
     onSnapshot(query.apply(null, args2), callback)
-
 
     // onSnapshot(query((snapshot)=>{
     // getDocs().then((docs)=>{
@@ -105,15 +117,37 @@ export const getDocumentsAsync = (user: any, type: string, path: string, fns: an
 }
 
 
-export const getDocumentAsync = async (user: any, type: string, path: string, fns: any[]) => {
+export const getDocumentAsync = async (user: any, type: string, path: string, fns: any[], nofn: any = undefined)  => {
     let args: any[] = [db, type, user.uid, ...path.split('/')]
     let document = await getDoc(doc.apply(null, args));
     let data = await document.data();
-    fns.forEach((fn)=> fn(data))
+    if (data)
+        fns.forEach((fn)=> fn(data))
+    else
+        if (nofn)
+            nofn()
+    return data;
 }
 
 export const setDocumentAsync = async (user:any, type: string, path: string, value: any, donefn=undefined, errorfn=undefined) => {
+    if(value && value.id)
+        delete value.id;
     let args: any[] = [db, type, user.uid, ...path.split('/')]
     setDoc(doc.apply(null, args), value)
+    .then((a)=> donefn && donefn()).catch((e)=> errorfn && errorfn());
+}
+
+export const updateDocumentAsync = async (user:any, type: string, path: string, value: any, donefn=undefined, errorfn=undefined) => {
+    if(value && value.id)
+        delete value.id;
+    let args: any[] = [db, type, user.uid, ...path.split('/')]
+    updateDoc(doc.apply(null, args), value)
+    .then((a)=> donefn && donefn()).catch((e)=> errorfn && errorfn());
+}
+
+
+export const deleteDocumentAsync = async (user:any, type: string, path: string, donefn=undefined, errorfn=undefined) => {
+    let args: any[] = [db, type, user.uid, ...path.split('/')]
+    deleteDoc(doc.apply(null, args))
     .then((a)=> donefn && donefn()).catch((e)=> errorfn && errorfn());
 }

@@ -1,5 +1,5 @@
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
-const { Header, Content, Footer } = Layout;
+const { Header, Content, Footer, Sider } = Layout;
 import {
     HomeOutlined,
     LoadingOutlined,
@@ -11,9 +11,9 @@ import {
 
 const BaseFooter = (props) => {
     return (
-        <Footer style={{ textAlign: 'center' }}>
+        <div style={{ textAlign: 'center', color: 'white' }}>
         Made with <HeartFilled/> by <a href="https://portfolio.sidhartharya.com">Sidharth Arya</a> ©{new Date().getFullYear()}
-      </Footer>
+      </div>
     )
 }
 

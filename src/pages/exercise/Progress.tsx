@@ -12,7 +12,7 @@ const SERVICE = "exercise"
 
 const Exercise = (props: any) => {
     const [typeList, setTypeList] = useState([]);
-    const [selectedType, setSelectedType] = useState('');
+    const [selectedType, setSelectedType] = useState(props.type ? props.type : '');
     // const [exerciseType, setExerciseType] = useState({});
     const [exerciseList, setExerciseList] = useState({});
     const [exerciseData, setExerciseData] = useState([]);
