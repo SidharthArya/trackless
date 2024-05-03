@@ -1,25 +1,40 @@
 import { Select, Button, Progress, Input,Card, Typography, Form} from 'antd';
-import { sortEKeys } from '../lib/utils';
+import { progressiveOverload, sortEKeys } from '../lib/utils';
 import { useEffect, useState, useContext } from 'preact/hooks';
 import { setDocumentAsync } from '../lib/database';
 import { UserContext } from './Login';
-
 
 const ExerciseToday = (props) => {
     const {entry, etype, exercise, part} = props;
     const [loading, setLoading] = useState('initial');
     const {user} = useContext(UserContext);
+    const volumeHandlers = {
+        'Weights': {deps: [], fn: (x) => x+1},
+        'Reps': {deps: ['Weights'], fn: (x, y) => y < 0 ? 20 - Math.sqrt(x) : Math.sqrt(x)},
+        'Time': {deps: [], fn: (x) => x},
+        'Sets': {deps: [], fn: (x) => x}
+    }
     const handleVolume = (row)=>{
-        let Volume = 0;
-        console.log(row.Weights, row.Reps)
-        if (row.Weights!==undefined && row.Reps) {
-          console.log("Here")
+        let Volume = 1;
+        console.log('Here')
+
+        Object.keys(row).map((k)=> {
+            console.log('Here')
+            if (!volumeHandlers[k]) return;
+            let args = [parseFloat(row[k])];
+            volumeHandlers[k].deps.map((k1)=> {args.push(parseFloat(row[k1]))});
+            console.log('Args', args);
+            let vol = volumeHandlers[k].fn.apply(null, args);
+            Volume = Volume*vol;
+        })
+        // if (row.Weights!==undefined && row.Reps) {
           
-          if (row.Weights < 0)
-          Volume = (row.Weights+1) * (20-Math.sqrt(row.Reps)) * row.Sets
-        else
-          Volume = (row.Weights+1) * Math.sqrt(row.Reps) * row.Sets
-        }
+        //   if (row.Weights < 0)
+        //   Volume = (row.Weights+1) * (20-Math.sqrt(row.Reps)) * row.Sets
+        // else
+        //   Volume = (row.Weights+1) * Math.sqrt(row.Reps) * row.Sets
+        // }
+        
         return Volume;
       };
     const getVals = (key = undefined) => {
@@ -38,22 +53,24 @@ const ExerciseToday = (props) => {
         return collection[0];
     };
     const setVals = (val, key = undefined) => {
+        if (!val) return;
         const form = document.querySelector(`#${entry.part}-${entry.exercise}`);
         const collection = form.getElementsByTagName('input');
+        if (!collection[key]) return;
         if (key) collection[key].value = val;
         else Object.keys(val).forEach((k)=> {
             collection[k].value = val[k];
         })
     };
     const handleFieldChange = (e, v)=> {
-
         const d = getVals();
+        console.log("Here", e);
+
         setVals(handleVolume(d), 'Volume');
     }
     const handleSaveRow = (row) => {
 
         row = getVals();
-        console.log(row);
         setLoading('loading')
         row.Date = new Date();
         const tempId = row.id;
@@ -72,8 +89,6 @@ const ExerciseToday = (props) => {
             row = Object.assign(row, v)
           }
       }
-      console.log('Rowss',row);
-      console.log(`exercises/${etype}/${tempExercise}/${row.Date.getTime().toString()}`);
       let btn = getButton();
       setDocumentAsync(user, 'data', `exercises/${etype}/${tempExercise}/${row.Date.getTime().toString()}`, row, function(){ setLoading('completed'); setTimeout(()=> setLoading('initial'), 2000); btn.textContent = "Saved";btn.classList.remove('ant-btn-primary'); btn.classList.add('ant-btn-dashed');}, function() {setLoading('failed'); setTimeout(()=> setLoading('initial'), 2000)})
         row.Date = row.Date.toISOString();
@@ -102,9 +117,8 @@ const ExerciseToday = (props) => {
             elem?.classList.remove('ant-card-done');
             elem?.classList.remove('ant-card-error');
         }
-    console.log(loading, elem)
     }, [loading])
-    setTimeout(()=> setVals('Weights:0 Reps:0 Sets:0', 'placeholder'), 2000)
+    setTimeout(()=> {let entry2 = progressiveOverload(entry); Object.keys(entry2).map((e)=> e === 'placeholder' ? setVals('Weights:0 Reps:0 Sets:0', 'placeholder'): setVals(entry[e], e))}, 2000)
 
     return <Form
     name={part + '-' + exercise} 
@@ -142,14 +156,14 @@ const ExerciseToday = (props) => {
                                 )
                         else
                             return (<div style={{ flex: 1}}>
-                                <Input name={k} placeholder={k} type='number' step="0.25" defaultValue={entry[k]} onChange={handleFieldChange} />
+                                {/* {console.log(entry[k], entry)} */}
+                                <Input name={k} placeholder={k} type='number' step="0.01"  onChange={handleFieldChange} />
                                 </div>
 
 )
                     }
                     
                 })}
-                {console.log(part, exercise, entry)}
                 <br></br>
                 <Button type="primary" htmlType='submit'>Save</Button>
             </div>
