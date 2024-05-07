@@ -1,5 +1,12 @@
+@font-face {
+  font-family: 'Adobe-Clean';
+  src: local('Adobe-Clean'), url(./fonts/AdobeClean-Regular.otf) format('otf');
+  /* other formats include: 'woff2', 'truetype, 'opentype',
+                            'embedded-opentype', and 'svg' */
+}
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Adobe-Clean', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -32,10 +39,9 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
   /* place-items: center; */
   min-width: 320px;
-  min-height: 100vh;
+  height: 100vh;
 }
 
 h1 {

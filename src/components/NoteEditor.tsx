@@ -5,7 +5,8 @@ import {PlusOutlined }  from '@ant-design/icons';
 import { getDocumentsAsync, getDocumentAsync, setDocumentAsync, updateDocumentAsync, deleteDocumentAsync } from '../lib/database';
 import { UserContext } from './Login';
 import dayjs from 'dayjs';
-import { Button, Checkbox, Typography } from 'antd';
+import { Button,  Typography } from 'antd';
+import Checkbox from './Checkbox.js';
 import EditorJS from '@editorjs/editorjs'
 import Header from '@editorjs/header'; 
 import List from '@editorjs/list'; 
@@ -79,15 +80,9 @@ const NoteEditor = (props) => {
       data && data.tags && setTagOpt(data.tags);
       if (editor) {
         await editor.blocks.clear()
-        setTimeout(()=> editor.blocks.render({...data, blocks: blocksP}), 1000)
+        await editor.blocks.render({...data, blocks: blocksP})
       }
     }, [data])
-
-    // useEffect(()=>{
-    //   // console.log(blocksP)
-    //   // editor?.render(blocksP)
-    //   console.log('blocksP', blocksP)
-    //   if (editor) editor.blocks.render({blocks: blocksP})
 
     // }, [blocksP])
     useEffect(()=>{
@@ -206,11 +201,12 @@ const NoteEditor = (props) => {
         });
       }, [notes]);
 
-      const handleTagChange = (e) =>{
+      const handleTagChange = (tag, checked) =>{
         
-        if(e.target.checked)
-          setTagOpt(prev=> [...prev, e.target.id.slice(4)])
-        else setTagOpt(prev => prev.filter((p)=> p != e.target.id.slice(4)));
+        if(checked)
+          setTagOpt(prev=> [...prev, tag])
+        else setTagOpt(prev => prev.filter((p)=> p != tag));
+      
       }
       const handleSaveData = ()=> {
         console.log(editor, tagOpt);
@@ -266,10 +262,13 @@ const NoteEditor = (props) => {
         return <a target="_blank" href={'/notes/note?id=' + a.id}> {a.title.text}</a>
       }
     return (<>
+    <div>
+
     <Button type="primary" style={{float: 'right', zIndex: 100}} onClick={handleSaveData}>Save</Button>
-    {Object.keys(tags).map((tag)=> <Checkbox id={`tag-${tag}`} onChange={handleTagChange} checked={tagOpt && tagOpt.includes(tag)}> {tag}</Checkbox>
+    {Object.keys(tags).map((tag)=> <Checkbox handleTagChange={handleTagChange} tag={tag} tagOpt={tagOpt} color={tags[tag].color ? tags[tag].color : '#000'}/>
 
     )}
+    </div>
     <div id="editorjs"></div>
     {backlinks.length > 0 && (
       <Typography>

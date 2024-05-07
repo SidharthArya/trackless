@@ -125,8 +125,8 @@ const TaskList = (props) => {
                 let seed = 0;
                 if (text)
                 return text.map((t)=> {
-                    if(tags[t] && tags[t].color)
-                    return <Tag color={tags[t].color}>{t}</Tag>
+                    if(tags.value[t] && tags.value[t].color)
+                    return <Tag color={tags.value[t].color}>{t}</Tag>
                     return <Tag color="#000">{t}</Tag>
             })
         }

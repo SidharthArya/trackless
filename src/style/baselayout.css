@@ -36,3 +36,8 @@
 MARK {
     background: '#ff0'
 }
+.ant-layout-sider-children{
+
+    display: flex;
+    flex-direction: column;
+}

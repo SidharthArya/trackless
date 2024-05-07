@@ -16,7 +16,7 @@ export const algos = algorithms
 
 export const initialPhysics = {
   enabled: true,
-  charge: -666,
+  charge: -3000,
   collision: true,
   collisionStrength: 33,
   centering: true,

@@ -19,7 +19,9 @@ const Exercise = (props: any) => {
     const [selectedPart, setSelectedPart] = useState('');
     const [selectedExercise, setSelectedExercise] = useState('');
     const {user} = useContext(UserContext);
-
+    useEffect(()=>{
+        console.log('ed', exerciseData)
+    }, [exerciseData])
     function setExerciseList_d(d) {
         setExerciseList(d)
     }

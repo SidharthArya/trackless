@@ -1,6 +1,6 @@
 import { FloatButton, Button, Layout, Radio, Input } from 'antd';
 import { useEffect } from 'preact/hooks';
-import { getDocumentsAsync } from '../lib/database';
+import { getDocumentsAsync, setDocumentAsync } from '../lib/database';
 import { effect } from '@preact/signals';
 import {PlusOutlined }  from '@ant-design/icons';
 
@@ -8,6 +8,7 @@ import {PlusOutlined }  from '@ant-design/icons';
 const TagFilter = (props) => {
     const tags = props.tags;
     const tagsFilter = props.filter;
+    const user = props.user;
     effect(()=>{
         const url = new URL(window.location.href);
         url.searchParams.set('tag', tagsFilter.value);
