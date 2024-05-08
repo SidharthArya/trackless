@@ -55,7 +55,7 @@ const TaskList = (props) => {
     const tagsFilter = useSignal(props.tag ? props.tag.split(','): []);
     const [newform] = Form.useForm();
     const [editorId, setEditorId] = useState('');
-    const [fuse, setFuse] = useState(new Fuse([], {keys: ['name', 'description', 'tags']}));
+    const [fuse, setFuse] = useState(new Fuse([], {keys: ['name']}));
     const [searchFilter, setSearchFilter] = useState("");
 
 
@@ -210,10 +210,9 @@ const TaskList = (props) => {
     }, [states.length])
 
     useEffect(()=> {
-        console.log('tagsFilter', tagsFilter.value)
         setFilteredTasks_n([]);
         setFilteredTasks_n(tasks);
-    }, [tagsFilter.value])
+    }, [tagsFilter.value, searchFilter])
     const handleNewNote = () => {
         setEditorId('new')
     }
