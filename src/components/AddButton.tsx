@@ -19,20 +19,6 @@ const List = (props) => {
         token: { colorBgContainer, borderRadiusLG, colorPrimary },
       } = theme.useToken();
 
-    const handleKeyDown = (e, record) => {
-            const field = e.target.name
-            const value =  e.target.value;
-            const data = {};
-            data[field] = value;
-            console.log(record)
-            updateDocumentAsync(user, 'data', 'quotes/' + record.id, data)
-      };
-    const handleGetState = (v,record, e) => {
-        if (v == 'DELETE')
-            deleteDocumentAsync(user, 'data', 'quotes/' + record.id)
-        else
-            updateDocumentAsync(user, 'data', 'quotes/' + record.id, {state: v})
-    };
       const handleNewTask = (e) => {
         const form = document.getElementById('newform');
         let data = {};

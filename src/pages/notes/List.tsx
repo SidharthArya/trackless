@@ -52,7 +52,7 @@ const TaskList = (props) => {
     const [floatB, setFloatB] = useState(false);
     const [taskFilter, setTaskFilter ] = useState([]);
     const [stateFilter, setStateFilter] = useState(props.state ? props.state : '');
-    const tagsFilter = useSignal(props.tag ? props.tag : '');
+    const tagsFilter = useSignal(props.tag ? props.tag.split(','): []);
     const [newform] = Form.useForm();
     const [editorId, setEditorId] = useState('');
     const [fuse, setFuse] = useState(new Fuse([], {keys: ['name', 'description', 'tags']}));
@@ -68,7 +68,6 @@ const TaskList = (props) => {
             const value =  e.target.value;
             const data = {};
             data[field] = value;
-            console.log(record)
             updateDocumentAsync(user, 'data', 'notes/' + record.id, data)
       };
     const handleGetState = (v,record, e) => {
@@ -153,16 +152,14 @@ const TaskList = (props) => {
         if (data.scheduled) data.scheduled = dayjs(data.scheduled).toDate()
     
     setDocumentAsync(user, 'data', 'notes/' + date.getTime().toString(), data)
-        console.log(data);
     }
     const newTaskForm = (e) => {
-        if (!document.getElementById('newform')) {console.log(document.getElementById('newform')); return;}
+        if (!document.getElementById('newform')) { return;}
         if (document.getElementById('newform').style.display == 'none')
             document.getElementById('newform').style.display = "block";
         else document.getElementById('newform').style.display = 'none';
     }
     const handleNewGetTags = (val) => {
-        console.log('Here')
         const form = document.getElementById('newform');
         const collection = form.getElementsByTagName('input');
         for (let i = 0; i < collection.length; i++)
@@ -175,24 +172,20 @@ const TaskList = (props) => {
         for (let i = 0; i < collection.length; i++)
             if(collection[i].name == 'state'){
                 collection[i].value = val;
-            console.log("State",collection[i].value )
             
             }
             }
     const setFilteredTasks_n = (docs) => {
-        console.log(docs);
         let docs_o = docs;
         docs = docs.map((doc)=> {
             doc.name = doc.title.text;
             return doc;
         })
-        let data = [];
-        
-        console.log(stateFilter, tagsFilter)
+        console.log(stateFilter, 'tags', tagsFilter.value)
         if (stateFilter.length)
             docs = docs.filter((doc) => stateFilter.length && doc.state === stateFilter )
         if (tagsFilter.value.length)
-            docs = docs.filter((doc) => tagsFilter.value.length && doc.tags && doc.tags.includes(tagsFilter.value) )
+            docs = docs.filter((doc) => doc.tags && doc.tags.some((t)=> tagsFilter.value.includes(t)) )
         fuse.setCollection(docs);
         if (searchFilter && searchFilter.length > 1)
             docs = fuse?.search(searchFilter).map((d)=> d.item);
@@ -216,15 +209,11 @@ const TaskList = (props) => {
         }], false)
     }, [states.length])
 
-    useEffect(()=>{
+    useEffect(()=> {
+        console.log('tagsFilter', tagsFilter.value)
         setFilteredTasks_n([]);
-        setTimeout(()=> setFilteredTasks_n(tasks), 1);
-    //     const url = new URL(window.location.href);
-    //     url.searchParams.set('state', stateFilter);
-    //     url.searchParams.set('tag', tagsFilter);
-    //     window.history.replaceState({}, '', url);
-        
-    }, [stateFilter, tagsFilter.value, searchFilter]);
+        setFilteredTasks_n(tasks);
+    }, [tagsFilter.value])
     const handleNewNote = () => {
         setEditorId('new')
     }

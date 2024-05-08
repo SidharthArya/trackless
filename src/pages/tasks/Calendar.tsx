@@ -17,7 +17,8 @@ const TaskCalendar = (props) => {
     const [tasks, setTasks] = useState([]);
     const [calendarEvents, setCalendarEvents] = useState([]);
     const tags = useSignal({});
-    const tagsFilter = useSignal(props.tag ? props.tag : '');
+    const tagsFilter = useSignal(props.tag ? props.tag.split(','): []);
+    
     const [hideTags, setHideTags] = useState(props.hidetags ? props.hidetags : false);
     const [rendered, setRendered] = useState(false);
     const [filteredTasks, setFilteredTasks] = useState([]);
@@ -321,7 +322,7 @@ const TaskCalendar = (props) => {
         if (stateFilter.length)
             docs = docs.filter((doc) => stateFilter.length && doc.state === stateFilter )
         if (tagsFilter.value.length)
-            docs = docs.filter((doc) => tagsFilter.value.length && doc.tags && doc.tags.includes(tagsFilter.value) )
+            docs = docs.filter((doc) => tagsFilter.value.length && doc.tags && doc.tags.some((t)=> tagsFilter.value.includes(t)) )
         
         setFilteredTasks(docs)
         return docs_o;
@@ -333,7 +334,7 @@ const TaskCalendar = (props) => {
       if (stateFilter.length)
           docs = docs.filter((doc) => stateFilter.length && doc.state === stateFilter )
       if (tagsFilter.value.length)
-          docs = docs.filter((doc) => tagsFilter.value.length && doc.tag && doc.tag == tagsFilter.value )
+            docs = docs.filter((doc) => tagsFilter.value.length && doc.tag && tagsFilter.value.includes(doc.tag) )
       
       setFilteredCalEvents(docs)
       return docs_o;

@@ -8,7 +8,7 @@ import NoteEditor from '../../components/NoteEditor';
 import { initialVisuals } from '../../components/Graph/config';
 import { initialPhysics } from '../../components/Graph/config';
 import { useWindowSize, useWindowWidth } from '@react-hook/window-size'
-
+import wrap from 'word-wrap';
 import { FloatButton, Layout, Radio, Input } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { MutableRefObject } from 'preact/compat';
@@ -35,7 +35,9 @@ const Graph = (props) => {
     const [noteContent, setNoteContent] = useState()
     const [hasInitialisedForces, setHasInitialisedForces] = useState(false);
     const [stateFilter, setStateFilter] = useState(props.state ? props.state : '');
-    const tagsFilter = useSignal(props.tag ? props.tag : '');
+    const tagsFilter = useSignal(props.tag ? props.tag.split(','): []);
+
+
 
     const graphRef = useRef();
     useEffect(() => {
@@ -85,11 +87,11 @@ const Graph = (props) => {
 
   useEffect(()=>{
     let nodes = data.nodes.filter((d)=> {
-      if (!tagsFilter.value) return true;
+      if (!tagsFilter.value.length) return true;
       // console.log(d.group, tagsFilter);
       if (!d.group) return false;
       // return true;
-      return d.group.includes(tagsFilter.value);
+      return d.group.some((g) => tagsFilter.value.includes(g));
       // for (let i = 0; i < d.tags.length; i++)
       //   for (let j = 0; j < tagsFilter.length; j++)
       //     if (d.tags[i] === tagsFilter[j])
@@ -115,19 +117,21 @@ const Graph = (props) => {
       nodeCanvasObject: (node, ctx, globalScale) => {
 
         const label = node.title;
-        const fontSize = 12/globalScale;
-        ctx.font = `${fontSize}px Sans-Serif`;
+        // const fontSize = 12/globalScale;
+        const fontSize = visuals.labelFontSize / Math.cbrt(Math.pow(globalScale, visuals.nodeZoomSize))
+        ctx.font = `${fontSize}px Adobe-Clean`;
         const textWidth = ctx.measureText(label).width;
         const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.2); // some padding
 
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+        // ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+        ctx.fillStyle = node.color;
 
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillStyle = node.color;
         ctx.fillText(label, node.x, node.y + 20);
 
-        node.__bckgDimensions = bckgDimensions; // to re-use in nodePointerAreaPaint
+        // node.__bckgDimensions = bckgDimensions; // to re-use in nodePointerAreaPaint
       },
     }
     const makeFilters = () => {
@@ -146,6 +150,7 @@ const Graph = (props) => {
         <BaseLayout {...props} now={editorId} filters={makeFilters} setEditorId={setEditorId}>
             {filteredData.nodes && filteredData.nodes.length > 0 && (
                 <div style={{position: 'absolute', left: 0, top: 0, zIndex: 0}}>
+                  {Object.keys(tags).length && 
                       <ForceGraph2D 
                       ref={graphRef}
                       width={windowWidth}
@@ -153,8 +158,10 @@ const Graph = (props) => {
     graphData={filteredData}
     {...graphCommonProps}
     nodeAutoColorBy={d=>d.group}
+    nodeColor={(e, k)=> {
+      return tags.value[e.group] && tags.value[e.group].color ? tags.value[e.group].color : "#000"}}
     d3ReheatSimulation={1}
-    d3Force = {('center', d3.forceCenter().strength(0.2))}
+    d3Force = {('center', d3.forceCenter(windowWidth/2, windowHeight/2).strength(0.2))}
     nodeLabel={d=> d.title}
     nodeRelSize={10}
     onNodeClick={(e)=> {setEditorId(e.id)}}
@@ -164,7 +171,7 @@ const Graph = (props) => {
 
     onEngine={incrementTick}
 
-    />
+    />}
     <FloatButton style={{zIndex: 20, left: 20}} icon={<PlusOutlined />} type="primary" onClick={(e)=> setEditorId('new')}/>
 
 

@@ -50,7 +50,7 @@ const List = (props) => {
     const [floatB, setFloatB] = useState(false);
     const [taskFilter, setTaskFilter ] = useState([]);
     const [stateFilter, setStateFilter] = useState(props.state ? props.state : 'TODO');
-    const tagsFilter = useSignal(props.tag ? props.tag : '');
+    const tagsFilter = useSignal(props.tag ? props.tag.split(','): []);
     const [newform] = Form.useForm();
     const [fuse, setFuse] = useState(new Fuse([], {keys: ['name', 'description', 'tags']}));
 
@@ -218,7 +218,7 @@ const List = (props) => {
         if (stateFilter.length)
             docs = docs.filter((doc) => stateFilter.length && doc.state === stateFilter )
         if (tagsFilter.value.length)
-            docs = docs.filter((doc) => tagsFilter.value.length && doc.tags && doc.tags.includes(tagsFilter.value) )
+            docs = docs.filter((doc) => doc.tags && doc.tags.some((t)=> tagsFilter.value.includes(t)) )
         fuse.setCollection(docs);
         if (searchFilter && searchFilter.length > 1)
             docs = fuse?.search(searchFilter).map((d)=> d.item);
@@ -249,7 +249,7 @@ const List = (props) => {
 
     useEffect(()=>{
         setFilteredTasks_n([]);
-        setTimeout(()=> setFilteredTasks_n(tasks), 1);
+        setFilteredTasks_n(tasks);
         const url = new URL(window.location.href);
         url.searchParams.set('state', stateFilter);
         // url.searchParams.set('tag', tagsFilter);
