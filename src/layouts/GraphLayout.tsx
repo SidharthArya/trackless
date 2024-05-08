@@ -106,11 +106,12 @@ useEffect(()=> {
       collapsed={collapsedR} 
       collapsedWidth="0"
       onCollapse={(value) => setCollapsed(value)}
-      style={{position: 'fixed', height: '100vh', zIndex: 2, right: 0, maxWidth: '100vw', minWidth: '50vw', color: '#000', overflowY: 'scroll', scrollbarWidth: 'none'}}
+      style={{position: 'fixed', height: '100vh', zIndex: 2, right: 0, maxWidth: '100vw', minWidth: '50vw', color: '#000', overflowY: 'scroll', scrollbarWidth: 'none', boxShadow:' 5px 0px 10px 1px'}}
     //   style={{ zIndex: 1, opacity: 0.9, overflow: 'auto', height: '100vh', position: 'fixed', left: 0, top: 0, bottom: 0 }}
       >   
-      {props.now && props.now.length > 0 &&(
+      {props.now && props.now.length > 0 && (<div style={{padding: 10}}>
     <NoteEditor {...{now: now == "new"? undefined : props.now}} />
+    </div>
       )}
        </Sider>
     </Layout>

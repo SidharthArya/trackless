@@ -264,7 +264,7 @@ const NoteEditor = (props) => {
     return (<>
     <div>
 
-    <Button type="primary" style={{float: 'right', zIndex: 100}} onClick={handleSaveData}>Save</Button>
+    <Button type="primary" style={{ zIndex: 100}} onClick={handleSaveData}>Save</Button>
     {Object.keys(tags).sort((t)=> {if(tagOpt.includes(t)) return -1; return 1}).map((tag)=> <Checkbox handleTagChange={handleTagChange} tag={tag} tagOpt={tagOpt} color={tags[tag].color ? tags[tag].color : '#000'}/>
 
     )}
