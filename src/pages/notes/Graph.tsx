@@ -36,8 +36,7 @@ const Graph = (props) => {
     const [hasInitialisedForces, setHasInitialisedForces] = useState(false);
     const [stateFilter, setStateFilter] = useState(props.state ? props.state : '');
     const tagsFilter = useSignal(props.tag ? props.tag.split(','): []);
-
-
+    const [graphCommonProps, setGraphCommonProps] = useState()
 
     const graphRef = useRef();
     useEffect(() => {
@@ -102,11 +101,17 @@ const Graph = (props) => {
     let links = data.links.filter((l) => nodes.map(n=>n.id).includes(typeof l.source === 'object' ? l.source.id : l.source) && nodes.map(n=>n.id).includes(typeof l.target === 'object' ? l.target.id : l.target));
     setFilteredData({nodes, links});
   }, [data, tagsFilter.value])
-
-    const graphCommonProps: ComponentPropsWithoutRef<typeof TForceGraph2D> = {
+  useEffect(()=>{
+    console.log('tags', tags.value)
+    setGraphCommonProps({
       nodeRelSize: 10,
       nodeCanvasObjectMode: () => 'after',
       linkColor: (link) => {
+        if (!link.source.group || !Object.keys(tags.value).length)
+          return '#000'
+        let ct = Object.keys(tags.value).find((t)=> link.source.group.includes(t) && tags.value[t].color);
+        if (ct)
+        return tags.value[ct].color ? tags.value[ct].color : "#000"
         return '#000'
       },
       linkDirectionalParticleWidth: visuals.particlesWidth,
@@ -133,7 +138,9 @@ const Graph = (props) => {
 
         // node.__bckgDimensions = bckgDimensions; // to re-use in nodePointerAreaPaint
       },
-    }
+    })
+  }, [tags.value, filteredData])
+    
     const makeFilters = () => {
       return (<>
       <div>
